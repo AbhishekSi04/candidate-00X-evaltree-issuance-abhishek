@@ -106,7 +106,7 @@ const RaffleWidget = forwardRef(({ userId }, ref) => {
       
       <div className="flex items-center justify-between mb-3">
         <span className="text-black/80 text-sm">Your Tickets:</span>
-        <span className="text-2xl font-bold text-black">{ticketCount/2}</span>
+        <span className="text-2xl font-bold text-black">{ticketCount}</span>
       </div>
 
       <div className="space-y-2">
