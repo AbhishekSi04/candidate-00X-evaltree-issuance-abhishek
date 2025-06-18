@@ -8,7 +8,7 @@ const HeroSection = ({ onShowCollectibles, userId }) => {
 
   const handleCreateCollectible = (newCollectible) => {
     // This will be handled by the parent component
-    console.log('New collectible created:', newCollectible)
+    // console.log('New collectible created:', newCollectible)
   }
 
   return (

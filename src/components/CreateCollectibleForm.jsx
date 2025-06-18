@@ -42,7 +42,7 @@ const CreateCollectibleForm = ({ userId, onCollectibleCreated, onClose }) => {
       const data = await response.json()
 
       if (data.success) {
-        console.log('✅ Collectible created:', data.collectible)
+        // console.log('✅ Collectible created:', data.collectible)
         onCollectibleCreated(data.collectible)
         onClose();
         

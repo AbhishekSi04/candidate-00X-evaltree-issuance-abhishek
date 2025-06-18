@@ -12,7 +12,7 @@ const RaffleWidget = forwardRef(({ userId }, ref) => {
     try {
       setIsLoading(true)
       const response = await fetch(`http://localhost:3001/api/raffle-status?userId=${userId}`);
-      console.log("raffle widget is:",response);
+      // console.log("raffle widget is:",response);
       
       if (!response.ok) {
         throw new Error('Failed to fetch raffle status')
@@ -20,7 +20,7 @@ const RaffleWidget = forwardRef(({ userId }, ref) => {
       
       const data = await response.json()
       setTicketCount(data.ticketCount || 0)
-      console.log('✅ Raffle status updated:', data.ticketCount, 'tickets')
+      // console.log('✅ Raffle status updated:', data.ticketCount, 'tickets')
     } catch (err) {
       setError(err.message)
       console.error('Error fetching raffle status:', err)
@@ -106,7 +106,7 @@ const RaffleWidget = forwardRef(({ userId }, ref) => {
       
       <div className="flex items-center justify-between mb-3">
         <span className="text-black/80 text-sm">Your Tickets:</span>
-        <span className="text-2xl font-bold text-black">{ticketCount}</span>
+        <span className="text-2xl font-bold text-black">{ticketCount/2}</span>
       </div>
 
       <div className="space-y-2">

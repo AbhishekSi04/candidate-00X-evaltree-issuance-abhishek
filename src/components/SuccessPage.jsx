@@ -58,6 +58,32 @@ const SuccessPage = () => {
     }
   }
 
+  // Function to increment user tickets
+  const incrementUserTickets = async (userId) => {
+    if (!userId) return
+    
+    try {
+      const response = await fetch('http://localhost:3001/api/increment-tickets', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId }),
+      })
+
+      const data = await response.json()
+      
+      if (data.success) {
+        // console.log('✅ Tickets incremented successfully:', data.message)
+        console.log(`🎫 User ${userId}: ${data.previousTickets} → ${data.currentTickets} tickets`)
+      } else {
+        console.error('❌ Failed to increment tickets:', data.error)
+      }
+    } catch (error) {
+      console.error('❌ Error incrementing tickets:', error)
+    }
+  }
+
   useEffect(() => {
     const session = searchParams.get("session_id")
     const user = searchParams.get("userId")
@@ -68,6 +94,8 @@ const SuccessPage = () => {
     // Automatically enroll user when they land on success page
     if (user) {
       enrollUser(user)
+      // Increment user tickets when success page is reached
+      incrementUserTickets(user)
       // Also refresh raffle status to ensure it's up to date
       refreshRaffleStatus(user)
     }

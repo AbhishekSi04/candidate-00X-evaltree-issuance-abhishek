@@ -22,12 +22,7 @@ app.use(express.json());
 app.use(express.raw({ type: 'application/json' }));
 
 // Mock data storage
-const raffleData = {
-  'user1': { ticketCount: 5 },
-  'user2': { ticketCount: 2 },
-  'user3': { ticketCount: 0 },
-  'default': { ticketCount: 1 }
-};
+const allUsers = new Map(); // key: userId, value: totalTickets
 
 // Track enrolled users
 const enrolledUsers = new Set();
@@ -74,13 +69,62 @@ app.get('/api/raffle-status', (req, res) => {
     return res.status(400).json({ error: 'User ID is required' });
   }
 
-  const userData =raffleData.default;
+  // Get the specific user's raffle data, or create if doesn't exist
+  let userData = allUsers.get(userId);
+  if (userData === undefined) {
+    // Initialize user with 0 tickets if they don't exist
+    allUsers.set(userId, 0);
+    userData = 0;
+    console.log(`🆕 New user ${userId} initialized with 0 tickets`);
+  }
+
+  console.log(`📊 Raffle status for user ${userId}: ${userData} tickets`);
 
   res.json({
     userId: userId,
-    ticketCount: userData.ticketCount,
+    ticketCount: userData,
     lastUpdated: new Date().toISOString()
   });
+});
+
+// GET /api/raffle-debug (for debugging)
+app.get('/api/raffle-debug', (req, res) => {
+  res.json({
+    allUsers: Object.fromEntries(allUsers),
+    totalUsers: allUsers.size,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// POST /api/increment-tickets (called from success page)
+app.post('/api/increment-tickets', (req, res) => {
+  const { userId } = req.body;
+
+  if (!userId) {
+    return res.status(400).json({ error: 'User ID is required' });
+  }
+
+  try {
+    // Get current ticket count or initialize to 0
+    const currentTickets = allUsers.get(userId) || 0;
+    
+    // Increment by 1
+    const newTicketCount = currentTickets + 1;
+    allUsers.set(userId, newTicketCount);
+    
+    console.log(`🎫 Success page: Incremented tickets for user ${userId}. ${currentTickets} → ${newTicketCount}`);
+    
+    res.json({
+      success: true,
+      userId: userId,
+      previousTickets: currentTickets,
+      currentTickets: newTicketCount,
+      message: `Tickets incremented for user ${userId}`
+    });
+  } catch (error) {
+    console.error('Error incrementing tickets:', error);
+    res.status(500).json({ error: 'Failed to increment tickets' });
+  }
 });
 
 // POST /api/raffle-award
@@ -91,13 +135,22 @@ app.post('/api/raffle-award', (req, res) => {
     return res.status(400).json({ error: 'User ID is required' });
   }
 
+  // Get the specific user's raffle data
+  let userData = allUsers.get(userId);
+  if (userData === undefined) {
+    return res.status(404).json({ error: 'User not found' });
+  }
+
+  if (userData <= 0) {
+    return res.status(400).json({ error: 'No tickets available to claim' });
+  }
+
   // Random prize selection
   const randomPrize = prizePool[Math.floor(Math.random() * prizePool.length)];
 
   // Reset ticket count after award
-  if (raffleData[userId]) {
-    raffleData[userId].ticketCount = 0;
-  }
+  allUsers.set(userId, 0);
+  console.log(`🎁 Prize claimed for user ${userId}: ${randomPrize}. Tickets reset to 0.`);
 
   res.json({
     success: true,
@@ -265,11 +318,8 @@ app.post('/api/create-checkout-session', async (req, res) => {
         }
       };
 
-      // Add raffle ticket for demo mode
-      if (!raffleData[userId]) {
-        raffleData[userId] = { ticketCount: 0 };
-      }
-      raffleData[userId].ticketCount += 1;
+      // Note: Tickets will be incremented when user reaches success page
+      console.log(`🎫 Demo mode: Checkout session created for user ${userId}. Tickets will be incremented on success page.`);
 
       // Automatically enroll user in demo mode using the enrollment function
       const enrollmentSuccess = enrollUser(userId, 'Evaltree');
@@ -314,11 +364,12 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
       // Add raffle ticket for successful payment
       const userId = session.metadata.userId;
       if (userId) {
-        if (!raffleData[userId]) {
-          raffleData[userId] = { ticketCount: 0 };
+        if (allUsers.get(userId) === undefined) {
+          allUsers.set(userId, 0);
+          console.log(`🆕 New user ${userId} created via webhook`);
         }
-        raffleData[userId].ticketCount += 1;
-        console.log(`Payment successful for user ${userId}. Raffle ticket added.`);
+        allUsers.set(userId, allUsers.get(userId) + 1);
+        console.log(`🎫 Webhook: Added raffle ticket for user ${userId}. Total tickets: ${allUsers.get(userId)}`);
         
         // Automatically enroll user in ecosystem using the enrollment function
         const enrollmentSuccess = enrollUser(userId, 'Evaltree');

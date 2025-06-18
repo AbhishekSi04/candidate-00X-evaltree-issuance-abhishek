@@ -17,7 +17,7 @@ const StripeCheckout = ({ onPurchase, isIssued, price = 1, userId, title }) => {
       
       if (!stripeKey || stripeKey === 'pk_test_your_stripe_publishable_key_here') {
         // Demo mode - simulate checkout process
-        console.log('Demo mode: Simulating Stripe checkout...')
+        // console.log('Demo mode: Simulating Stripe checkout...')
         
         // Simulate successful payment
         setTimeout(async () => {
