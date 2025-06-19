@@ -11,7 +11,7 @@ const RaffleWidget = forwardRef(({ userId }, ref) => {
   const fetchRaffleStatus = async () => {
     try {
       setIsLoading(true)
-      const response = await fetch(`http://localhost:3001/api/raffle-status?userId=${userId}`);
+      const response = await fetch(`https://candidate-00-x-evaltree-issuance-ab.vercel.app/api/raffle-status?userId=${userId}`);
       // console.log("raffle widget is:",response);
       
       if (!response.ok) {
@@ -37,7 +37,7 @@ const RaffleWidget = forwardRef(({ userId }, ref) => {
   // Trigger raffle award
   const triggerRaffleAward = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/raffle-award', {
+      const response = await fetch('https://candidate-00-x-evaltree-issuance-ab.vercel.app/api/raffle-award', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

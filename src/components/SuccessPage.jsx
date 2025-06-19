@@ -17,7 +17,7 @@ const SuccessPage = () => {
 
     setIsEnrolling(true)
     try {
-      const response = await fetch('http://localhost:3001/api/enroll', {
+      const response = await fetch('https://candidate-00-x-evaltree-issuance-ab.vercel.app/api/enroll', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -50,7 +50,7 @@ const SuccessPage = () => {
     if (!userId) return
     
     try {
-      const response = await fetch(`http://localhost:3001/api/raffle-status?userId=${userId}`)
+      const response = await fetch(`https://candidate-00-x-evaltree-issuance-ab.vercel.app/api/raffle-status?userId=${userId}`)
       const data = await response.json()
       console.log('🔄 Raffle status refreshed from success page:', data.ticketCount, 'tickets')
     } catch (error) {
@@ -63,7 +63,7 @@ const SuccessPage = () => {
     if (!userId) return
     
     try {
-      const response = await fetch('http://localhost:3001/api/increment-tickets', {
+      const response = await fetch('https://candidate-00-x-evaltree-issuance-ab.vercel.app/api/increment-tickets', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

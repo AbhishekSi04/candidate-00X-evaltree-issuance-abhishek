@@ -34,7 +34,7 @@ const EvaltreeExclusive = () => {
   const fetchCollectibles = async () => {
     setIsLoadingCollectibles(true)
     try {
-      const response = await fetch('http://localhost:3001/api/collectibles')
+      const response = await fetch('https://candidate-00-x-evaltree-issuance-ab.vercel.app/api/collectibles')
       const data = await response.json()
       
       if (data.success) {

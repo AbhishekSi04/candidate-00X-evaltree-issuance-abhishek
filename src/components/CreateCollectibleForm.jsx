@@ -28,7 +28,7 @@ const CreateCollectibleForm = ({ userId, onCollectibleCreated, onClose }) => {
     setError('')
 
     try {
-      const response = await fetch('http://localhost:3001/api/createCollectible', {
+      const response = await fetch('https://candidate-00-x-evaltree-issuance-ab.vercel.app/api/createCollectible', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

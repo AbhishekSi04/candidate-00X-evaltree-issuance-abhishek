@@ -38,7 +38,7 @@ const StripeCheckout = ({ onPurchase, isIssued, price = 1, userId, title }) => {
       const stripe = await loadStripe(stripeKey)
 
       // Create checkout session via server
-      const response = await fetch('http://localhost:3001/api/create-checkout-session', {
+      const response = await fetch('https://candidate-00-x-evaltree-issuance-ab.vercel.app/api/create-checkout-session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
